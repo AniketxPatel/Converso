@@ -40,3 +40,19 @@ export const getAllCompanions = async ({ limit = 10, page = 1, subject, topic }:
 
     return companions;
 }
+export const getCompanion = async (id: string) => {
+    const supabase = createSupaBaseCLient();
+
+    const { data, error } = await supabase
+        .from("companions") // make sure the table name is correct — plural if needed
+        .select("*")
+        .eq("id", id)
+        .single(); // ensures you get a single object instead of an array
+
+    if (error) {
+        console.error("Error fetching companion:", error.message);
+        return null;
+    }
+
+    return data; // return the actual row
+};
