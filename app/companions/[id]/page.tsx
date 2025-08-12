@@ -1,3 +1,4 @@
+import CompanionComponent from "@/components/CompanionComponent";
 import { getCompanion } from "@/lib/actions/companion.actions";
 import { getSubjectColor } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs/server";
@@ -11,8 +12,10 @@ interface CompanionSessionPageProps {
 
 const CompanionsSession = async ({ params }: CompanionSessionPageProps) => {
   const { id } = params;
-  const { name, subject, title, topic, duration } = await getCompanion(id);
+  const companion = await getCompanion(id);
   const user = await currentUser();
+
+  const { name, subject, title, topic, duration } = companion; 
 
   if (!user) redirect("/sign-in");
   if (!name) redirect("/companions");
@@ -22,7 +25,7 @@ const CompanionsSession = async ({ params }: CompanionSessionPageProps) => {
   return (
     <main>
       <article className="flex rounded-border justify-between p-6 max-md:flex-col">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-6">
           <div
             className="size-[72px] flex items-center justify-center rounded-lg max-md:hidden"
             style={{ backgroundColor: getSubjectColor(subject) }}
@@ -34,18 +37,24 @@ const CompanionsSession = async ({ params }: CompanionSessionPageProps) => {
               height={35}
             />
           </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <p className="font-bold text-2xl">{name}</p>
-            <div className="subject-badge max-sm:hidden">{subject}</div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-4">
+              <p className="font-bold text-2xl">{name}</p>
+              <div className="subject-badge max-sm:hidden">{subject}</div>
+            </div>
+            <p className="text-lg">{topic}</p>
           </div>
-          <p className="text-lg">{topic}</p>
         </div>
         <div className="items-start text-2xl max-md:hidden">
           {duration} minutes
         </div>
       </article>
+      <CompanionComponent
+        {...companion}
+        companionId={id}
+        userName={user.firstName!}
+        userImage={user.imageUrl!}
+      />
     </main>
   );
 };
