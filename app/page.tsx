@@ -6,6 +6,8 @@ import { getAllCompanions, getRecentSession } from "@/lib/actions/companion.acti
 import { getSubjectColor } from "@/lib/utils";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 const Page = async () => {
   const companions = await getAllCompanions({ limit: 3 });
   const recentSessionCompanion = await getRecentSession(10);
@@ -16,7 +18,7 @@ const Page = async () => {
       <section className="home-section">
         {companions.map((companion) => (
           <CompanionCard
-          key={companion.id}
+            key={companion.id}
             {...companion}
             color={getSubjectColor(companion.subject)}
           />
